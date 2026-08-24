@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Registration Training — Made By Ammar</title>
+<style>
+:root{
+  --navy:#003a63; --navy2:#0d3b5c; --cyan:#22c1d6;
+  --panel:#8b9aa4; --link:#7a1f1f; --border:#c9c9c9;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:"Segoe UI",Arial,Helvetica,sans-serif;font-size:13px;color:#222;background:#fff}
+a{color:var(--link);text-decoration:underline;cursor:pointer}
+a:hover{color:#a83232}
+
+/* HEADER */
+.ban-header{background:var(--navy);height:52px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#fff;position:sticky;top:0;z-index:50}
+.hleft{display:flex;align-items:center;gap:16px}
+.grid-icon{display:grid;grid-template-columns:repeat(2,7px);grid-template-rows:repeat(2,7px);gap:3px;cursor:pointer}
+.grid-icon i{background:#fff;display:block;border-radius:1px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-col{text-align:center;line-height:1.15}
+.logo-col .ar{font-size:11px;letter-spacing:1px}
+.logo-col .en{font-size:11px;letter-spacing:2px;font-weight:600}
+.logo-sep{width:1px;height:26px;background:rgba(255,255,255,.6)}
+.hright{display:flex;align-items:center;gap:14px;font-size:14px}
+.icon-btn{width:22px;height:22px;opacity:.95;cursor:pointer}
+.avatar{width:24px;height:24px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}
+.avatar svg{width:18px;height:18px;fill:var(--navy)}
+
+/* BREADCRUMB */
+.crumb{padding:12px 18px 0;font-size:13px}
+.crumb .sep{color:#666;margin:0 8px;font-size:10px;vertical-align:middle}
+.crumb a{color:#1c1c1c}
+.crumb .cur{color:#1c1c1c}
+.page-title{font-size:19px;padding:6px 18px 10px;font-weight:400;background:#f4f4f4;border-bottom:1px solid #e2e2e2;margin-top:6px}
+
+/* PANELS */
+.wrap{padding:12px 14px 60px}
+.panel{border:1px solid var(--border);border-radius:3px;background:#fff;margin-bottom:14px}
+.panel-head{background:var(--panel);color:#fff;font-weight:bold;font-size:12px;padding:5px 10px;border-radius:2px 2px 0 0;display:flex;align-items:center;gap:6px}
+.panel-body{padding:14px}
+.info-i{width:14px;height:14px;border-radius:50%;background:#fff;color:var(--panel);font-size:10px;font-weight:bold;display:inline-flex;align-items:center;justify-content:center}
+
+/* BUTTONS / FORM */
+button.btn{font-family:inherit;font-size:12px;padding:4px 14px;border:1px solid #8c8c8c;border-radius:3px;background:linear-gradient(#fbfbfb,#e2e2e2);cursor:pointer;color:#222}
+button.btn:hover{background:linear-gradient(#fff,#d6d6d6)}
+button.btn[disabled]{color:#9a9a9a;cursor:not-allowed;background:linear-gradient(#f5f5f5,#eaeaea)}
+button.btn.primary{background:linear-gradient(#e9e9e9,#cfcfcf);font-weight:600}
+input[type=text]{font-family:inherit;font-size:12px;padding:4px 6px;border:1px solid #9e9e9e;border-radius:2px;background:#fff}
+input[type=text]:focus{outline:2px solid #6ea8dc;outline-offset:-1px}
+select{font-family:inherit;font-size:12px;padding:3px 4px;border:1px solid #9e9e9e;border-radius:2px;background:#fff}
+label{font-size:12px}
+
+/* DASHBOARD */
+.dash{max-width:1200px;margin:0 auto;padding:26px 20px 10px}
+.dash h1{font-weight:400;font-size:34px;color:#2f4f5a;margin:0 0 18px 4px}
+.dash-card{background:#fbfbfb;border:1px solid #ececec;padding:22px 26px;display:flex;gap:24px}
+.dash-avatar{width:82px;height:82px;border-radius:50%;background:#d9d9d9;flex:none;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+.dash-avatar svg{width:60px;height:60px;fill:#b7b7b7}
+.dash-main{flex:1}
+.hello{color:#3c4a52;margin-bottom:12px}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;background:#f2f2f2;padding:14px;border:1px solid #e6e6e6}
+.tile{background:#fff;border:1px solid #e3e3e3;border-radius:3px;padding:16px 8px 12px;text-align:center;cursor:pointer;transition:.15s}
+.tile:hover{box-shadow:0 2px 10px rgba(0,0,0,.14);transform:translateY(-2px)}
+.tile svg{width:52px;height:52px;fill:none;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.tile svg .s{stroke:var(--navy2)} .tile svg .c{stroke:var(--cyan)}
+.tile span{display:block;margin-top:10px;color:#3c4a52;font-size:13px}
+.support{margin-top:14px;color:#3c4a52;font-size:13px}
+.footer{text-align:center;color:#666;font-size:12px;padding:16px 0 26px}
+
+/* REGISTRATION MENU */
+.menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 60px}
+.menu-item{display:flex;gap:14px;padding:12px 4px;border-bottom:1px solid #e4e4e4;align-items:flex-start}
+.menu-item .ico{width:40px;height:40px;flex:none}
+.menu-item .tt{font-size:13px}
+.menu-item .dd{color:#555;font-size:12px;margin-top:2px}
+
+/* TABS */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);padding:0 2px}
+.tab{padding:6px 16px;font-size:12px;cursor:pointer;border:1px solid transparent;border-bottom:none;color:#222}
+.tab.active{background:var(--navy);color:#fff;border-radius:2px 2px 0 0}
+.tab:not(.active):hover{background:#eaeaea}
+.tip{position:absolute;background:#fff;border:1px solid #999;box-shadow:0 2px 6px rgba(0,0,0,.2);padding:8px 10px;font-size:11px;width:170px;color:#333;line-height:1.35}
+
+/* ===== ORIGINAL SCHEDULE DESIGN (hour grid, split layout) ===== */
+.split{display:flex;gap:8px;align-items:stretch;margin-top:6px}
+.split>div{flex:1;min-width:0}
+.mini-tabs{display:flex;border-bottom:1px solid #c9c9c9;background:#f3f3f3}
+.mini-tab{padding:6px 12px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.mini-tab.active{background:#fff;border:1px solid #c9c9c9;border-bottom:1px solid #fff;margin-bottom:-1px;font-weight:600}
+.sched-title{font-size:11px;font-weight:bold;padding:4px 6px;background:#fff}
+.sched-wrap{border:1px solid #d6d6d6;height:320px;overflow-y:auto;background:#fff;position:relative}
+.sched-head{display:grid;grid-template-columns:44px repeat(5,1fr);position:sticky;top:0;background:#fff;z-index:5}
+.sched-head div{font-size:11px;text-align:center;padding:3px 0;border-bottom:1px solid #ccc;border-right:1px solid #eee}
+.sched-body{display:grid;grid-template-columns:44px repeat(5,1fr);position:relative}
+.hours{position:relative}
+.hours .h{height:44px;font-size:10px;color:#333;text-align:right;padding-right:4px;border-right:1px solid #ddd}
+.daycol{position:relative;border-right:1px solid #eee}
+.daycol .cell{height:44px;border-bottom:1px solid #eee}
+.ev{position:absolute;left:1px;right:1px;font-size:9px;line-height:1.25;padding:2px 3px;overflow:hidden;border-radius:2px;color:#20291f}
+.ev u{text-decoration:underline}
+.ev .ck{color:#0a7a28;font-weight:bold;margin-right:2px}
+.ev.pending{opacity:.6;border:2px dashed #444}
+
+/* SUMMARY */
+.sum-head{display:flex;justify-content:space-between;align-items:center;background:#f3f3f3;border:1px solid #c9c9c9;border-bottom:none;padding:5px 8px;font-size:12px}
+.sum-head .t{display:flex;align-items:center;gap:6px;font-weight:600}
+table.sum{width:100%;border-collapse:collapse;background:#fff;font-size:12px}
+table.sum th{background:#fff;border:1px solid #dcdcdc;padding:6px 8px;text-align:left;font-weight:600;color:#333}
+table.sum td{border:1px solid #e6e6e6;padding:5px 8px;color:#333}
+.badge{padding:1px 6px;border-radius:2px;font-style:italic;font-size:11px}
+.badge.reg{background:#cdeacd;color:#1c5c1c}
+.badge.pen{background:#fdf0c4;color:#7a5a00}
+.totals{background:#dbe5ee;border:1px solid #c9c9c9;border-top:none;padding:5px 8px;font-size:11px}
+.sum-wrap{border:1px solid #c9c9c9;border-top:none;height:276px;overflow:auto}
+.empty-row{color:#888;padding:14px;text-align:center;font-size:12px}
+.bottom-bar{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+
+/* TOAST */
+.toasts{position:fixed;top:64px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{padding:9px 14px;border-radius:3px;font-size:12px;box-shadow:0 3px 10px rgba(0,0,0,.2);max-width:340px;animation:slide .25s ease}
+.toast.ok{background:#d9f0d9;border:1px solid #79b779;color:#14571b}
+.toast.err{background:#f8d7d7;border:1px solid #c98181;color:#7d1c1c}
+@keyframes slide{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:none}}
+
+/* HINT */
+.hint{position:relative;z-index:30}
+.hint::after{content:"";position:absolute;inset:-9px -16px;border:3px solid #c2185b;border-radius:50%;animation:pulse 1.3s infinite;pointer-events:none;z-index:40}
+@keyframes pulse{0%{opacity:.3;transform:scale(.97)}50%{opacity:1;transform:scale(1.03)}100%{opacity:.3;transform:scale(.97)}}
+
+/* GUIDE */
+.guide{position:fixed;top:62px;right:14px;width:292px;background:#fff;border:1px solid #c2185b;border-radius:6px;box-shadow:0 6px 22px rgba(0,0,0,.18);z-index:150;direction:rtl;font-size:12px;overflow:hidden;max-height:calc(100vh - 80px);overflow-y:auto}
+.guide h4{margin:0;background:#c2185b;color:#fff;padding:7px 10px;font-size:13px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.guide h4 span{cursor:pointer;font-size:15px;line-height:1}
+.guide ol{margin:0;padding:8px 24px 8px 10px;line-height:1.6}
+.guide li{color:#666;margin-bottom:2px}
+.guide li.done{color:#1c7a2e;text-decoration:line-through}
+.guide li.active{color:#c2185b;font-weight:bold}
+.opt{border-top:1px solid #f0dbe3;padding:8px 10px;background:#fffafc}
+.opt .oh{font-weight:bold;color:#8f1740;margin-bottom:3px}
+.opt .crns{font-family:Consolas,monospace;color:#333;letter-spacing:.5px}
+.opt button{margin-top:5px;font-size:11px;padding:2px 8px}
+.guide .gfoot{padding:8px 10px;border-top:1px solid #eee}
+.guide-open{position:fixed;top:62px;right:14px;z-index:150;background:#c2185b;color:#fff;border:none;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;box-shadow:0 3px 10px rgba(0,0,0,.25);display:none}
+
+table.res{width:100%;border-collapse:collapse;font-size:12px;margin-top:10px}
+table.res th{background:#eef1f4;border:1px solid #d5d5d5;padding:6px;text-align:left}
+table.res td{border:1px solid #e4e4e4;padding:5px 6px}
+.crn-row{display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.crn-row label{width:34px}
+.made-by{font-size:11px;color:#8aa7bd;letter-spacing:.5px}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<div class="ban-header">
+  <div class="hleft">
+    <div class="grid-icon"><i></i><i></i><i></i><i></i></div>
+    <div class="logo">
+      <div class="logo-col"><div class="ar">البحرين</div><div class="en">BAHRAIN</div></div>
+      <div class="logo-sep"></div>
+      <div class="logo-col"><div class="ar">بوليتكنك</div><div class="en">POLYTECHNIC</div></div>
+    </div>
+  </div>
+  <div class="hright">
+    <svg class="icon-btn" viewBox="0 0 24 24" fill="#fff"><path d="M12 8a4 4 0 100 8 4 4 0 000-8zm9 4c0-.5 0-1-.1-1.4l2-1.6-2-3.4-2.4 1a7.6 7.6 0 00-2.4-1.4L15.7 2h-3.9l-.4 2.6c-.9.3-1.7.8-2.4 1.4l-2.4-1-2 3.4 2 1.6c-.1.5-.1.9-.1 1.4s0 1 .1 1.4l-2 1.6 2 3.4 2.4-1c.7.6 1.5 1 2.4 1.4l.4 2.8h3.9l.4-2.8c.9-.3 1.7-.8 2.4-1.4l2.4 1 2-3.4-2-1.6c.1-.4.1-.9.1-1.4z"/></svg>
+    <div class="avatar"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-5 0-9 2.7-9 6v2h18v-2c0-3.3-4-6-9-6z"/></svg></div>
+    <span>Made By Ammar</span>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<!-- GUIDE -->
+<div class="guide" id="guide">
+  <h4>دليل التدريب على التسجيل <span onclick="toggleGuide(false)">×</span></h4>
+  <ol id="guideSteps">
+    <li data-s="1">من Student Services اضغط <b>Registration</b></li>
+    <li data-s="2">اضغط <b>Register for Classes</b></li>
+    <li data-s="3">اختر الترم ثم <b>Continue</b></li>
+    <li data-s="4">افتح تبويب <b>Enter CRNs</b></li>
+    <li data-s="5">اكتب الـ CRN ثم <b>+ Add Another CRN</b> وكرّرها</li>
+    <li data-s="6">اضغط <b>Add to Summary</b></li>
+    <li data-s="7">اضغط <b>Submit</b> تحت على اليمين</li>
+  </ol>
+  <div class="opt">
+    <div class="oh">الخيار 1 — IT (نفس الجدول المرسل)</div>
+    <div class="crns">10886 · 11317 · 10925 · 11275</div>
+    <button class="btn" onclick="fillSet(['10886','11317','10925','11275'])">تعبئة الأرقام</button>
+  </div>
+  <div class="opt">
+    <div class="oh">الخيار 2 — IT (Cloud Security صباحي)</div>
+    <div class="crns">10886 · 11317 · 10925 · 11276</div>
+    <button class="btn" onclick="fillSet(['10886','11317','10925','11276'])">تعبئة الأرقام</button>
+  </div>
+  <div class="opt">
+    <div class="oh">الخيار 3 — Engineering</div>
+    <div class="crns">11191 · 10460 · 10949 · 11026</div>
+    <button class="btn" onclick="fillSet(['11191','10460','10949','11026'])">تعبئة الأرقام</button>
+  </div>
+  <div class="gfoot"><button class="btn" onclick="resetAll()">إعادة التدريب من البداية</button></div>
+</div>
+<button class="guide-open" id="guideOpen" onclick="toggleGuide(true)">؟</button>
+
+<!-- PAGE 1 : DASHBOARD -->
+<section id="page-dashboard">
+  <div class="dash">
+    <h1>Student Services</h1>
+    <div class="dash-card">
+      <div class="dash-avatar"><svg viewBox="0 0 24 24"><path d="M12 12a5 5 0 100-10 5 5 0 000 10zm0 2c-5 0-9 2.7-9 6v2h18v-2c0-3.3-4-6-9-6z"/></svg></div>
+      <div class="dash-main">
+        <div class="hello">Hello Made By Ammar,</div>
+        <div class="tiles" id="tiles"></div>
+        <div class="support">If you need any support, please feel free to <a>contact us.</a></div>
+      </div>
+    </div>
+    <div class="footer">© 2013-2024 Ellucian Company L.P. and its affiliates. All rights reserved. <span class="made-by">| Training simulation — Made By Ammar</span></div>
+  </div>
+</section>
+
+<!-- PAGE 2 : REGISTRATION MENU -->
+<section id="page-registration" class="hidden">
+  <div class="crumb"><a onclick="go('dashboard')">Student</a><span class="sep">●</span><span class="cur">Registration</span></div>
+  <div class="page-title">Registration</div>
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-head">What would you like to do?</div>
+      <div class="panel-body">
+        <div class="menu-grid">
+          <div>
+            <div class="menu-item">
+              <svg class="ico" viewBox="0 0 48 48"><rect x="10" y="8" width="28" height="34" rx="2" fill="#e8d9b5" stroke="#9a8355"/><rect x="17" y="4" width="14" height="8" rx="2" fill="#c8b58a" stroke="#9a8355"/><path d="M16 20h16M16 27h16M16 34h10" stroke="#8b7444" stroke-width="2"/></svg>
+              <div><a class="tt" onclick="notPart()">Prepare for Registration</a><div class="dd">View registration status, update student term data, and complete pre-registration requirements.</div></div>
+            </div>
+            <div class="menu-item">
+              <svg class="ico" viewBox="0 0 48 48"><rect x="8" y="12" width="26" height="20" rx="2" fill="#8fb8e0" stroke="#4a7ba8"/><rect x="12" y="18" width="26" height="20" rx="2" fill="#7fc48f" stroke="#3f8a55"/><path d="M16 26h18M16 32h12" stroke="#2f6a42" stroke-width="2"/></svg>
+              <div><a class="tt" onclick="notPart()">Plan Ahead</a><div class="dd">Give yourself a head start by building plans. When you're ready to register, you'll be able to load these plans.</div></div>
+            </div>
+            <div class="menu-item">
+              <svg class="ico" viewBox="0 0 48 48"><path d="M6 14h14l4 5h18v20H6z" fill="#f3c847" stroke="#b8912c"/><path d="M6 22h36v17H6z" fill="#ffdb70" stroke="#b8912c"/></svg>
+              <div><a class="tt" onclick="notPart()">View Registration Information</a><div class="dd">View your past schedules and your ungraded classes.</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="menu-item">
+              <svg class="ico" viewBox="0 0 48 48"><rect x="7" y="12" width="26" height="24" rx="2" fill="#fff" stroke="#8a8a8a"/><path d="M7 19h26" stroke="#c4443b" stroke-width="4"/><path d="M12 25h6M12 30h14M22 25h6" stroke="#7a7a7a" stroke-width="2"/><path d="M34 34l8-8 4 4-8 8-5 1z" fill="#e0a33c" stroke="#a0752a"/></svg>
+              <div><a class="tt" id="link-register-classes" onclick="go('term')">Register for Classes</a><div class="dd">Search and register for your classes. You can also view and manage your schedule.</div></div>
+            </div>
+            <div class="menu-item">
+              <svg class="ico" viewBox="0 0 48 48"><rect x="10" y="7" width="26" height="32" rx="2" fill="#fff" stroke="#8a8a8a"/><path d="M15 14h16M15 20h16M15 26h10" stroke="#9a9a9a" stroke-width="2"/><circle cx="28" cy="30" r="8" fill="#cfe6f7" stroke="#3d6f9e" stroke-width="2"/><path d="M34 36l6 6" stroke="#3d6f9e" stroke-width="3"/></svg>
+              <div><a class="tt" onclick="goBrowse()">Browse Classes</a><div class="dd">Looking for classes? In this section you can browse classes you find interesting.</div></div>
+            </div>
+            <div class="menu-item">
+              <svg class="ico" viewBox="0 0 48 48"><path d="M9 9h13v30H9z" fill="#d94b3f" stroke="#9c352c"/><path d="M22 9h13v30H22z" fill="#f0b429" stroke="#a97f18"/><circle cx="28" cy="30" r="8" fill="#cfe6f7" stroke="#3d6f9e" stroke-width="2"/><path d="M34 36l6 6" stroke="#3d6f9e" stroke-width="3"/></svg>
+              <div><a class="tt" onclick="notPart()">Browse Course Catalog</a><div class="dd">Look up basic course information like subject, course and description.</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">© 2013-2024 Ellucian Company L.P. and its affiliates. All rights reserved.</div>
+</section>
+
+<!-- PAGE 3 : SELECT A TERM -->
+<section id="page-term" class="hidden">
+  <div class="crumb"><a onclick="go('dashboard')">Student</a><span class="sep">●</span><a onclick="go('registration')">Registration</a><span class="sep">●</span><span class="cur">Select a Term</span></div>
+  <div class="page-title">Select a Term</div>
+  <div class="wrap">
+    <div class="panel">
+      <div class="panel-head">How would you like to search? <span class="info-i">i</span></div>
+      <div class="panel-body">
+        <div style="margin-bottom:12px">
+          <label><input type="radio" name="how" checked> Term</label>
+          <label style="margin-left:24px"><input type="radio" name="how" onclick="this.checked=false;document.querySelector('input[name=how]').checked=true;toast('Date Range غير مفعّل في التدريب — استخدم Term','err')"> Date Range</label>
+          <span class="info-i" style="background:#8b9aa4;color:#fff">i</span>
+        </div>
+        <div style="font-size:12px;margin-bottom:4px">Terms Open for Registration</div>
+        <select id="term-select" style="width:470px" onchange="render()">
+          <option value="">Select a term...</option>
+          <option value="Semester 1 2026-2027">Semester 1 2026-2027 1448/28/ربيع الأول - 02/رجب/1448</option>
+          <option value="Semester 2 2026-2027">Semester 2 2026-2027 1448/10/شعبان - 20/ذو الحجة/1448</option>
+        </select>
+        <div style="margin-top:18px"><button class="btn" id="btn-continue" onclick="continueTerm()">Continue</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">© 2013-2024 Ellucian Company L.P. and its affiliates. All rights reserved.</div>
+</section>
+
+<!-- PAGE 4 : REGISTER FOR CLASSES -->
+<section id="page-classes" class="hidden">
+  <div class="crumb">
+    <a onclick="go('dashboard')">Student</a><span class="sep">●</span>
+    <a onclick="go('registration')">Registration</a><span class="sep">●</span>
+    <a onclick="go('term')">Select a Term</a><span class="sep">●</span>
+    <span class="cur">Register for Classes</span>
+  </div>
+  <div class="page-title">Register for Classes</div>
+
+  <div style="padding:8px 14px 0">
+    <div class="tabs">
+      <div class="tab active" id="tab-find" onclick="setTab('find')">Find Classes</div>
+      <div class="tab" id="tab-crn" onclick="setTab('crn')">Enter CRNs</div>
+      <div class="tab" id="tab-opt" onclick="setTab('opt')">Schedule and Options</div>
+    </div>
+
+    <!-- FIND CLASSES -->
+    <div class="panel" id="pane-find" style="border-top:none;border-radius:0 0 3px 3px">
+      <div class="panel-body" style="min-height:200px;position:relative">
+        <div style="font-weight:600;margin-bottom:2px">Enter Your Search Criteria <span class="info-i" style="background:#8b9aa4;color:#fff">i</span></div>
+        <div style="font-size:12px;margin-bottom:14px">Term: <span class="term-label">—</span></div>
+        <div style="display:grid;grid-template-columns:110px 1fr;gap:8px;max-width:660px;align-items:center">
+          <div style="text-align:right;font-size:12px">Subject</div><input type="text" id="f-subject" placeholder="IT / EN / EL" style="width:100%">
+          <div style="text-align:right;font-size:12px">Course Number</div><input type="text" id="f-number" style="width:180px">
+          <div style="text-align:right;font-size:12px">Keyword</div><input type="text" id="f-keyword" style="width:100%">
+          <div></div>
+          <div style="margin-top:6px">
+            <button class="btn" onclick="doSearch()">Search</button>
+            <a style="margin:0 12px" onclick="clearSearch()">Clear</a>
+            <a>› Advanced Search</a>
+          </div>
+        </div>
+        <div class="tip" style="right:24%;top:96px">Enter one or more words (partial words allowed). The search uses AND logic to return classes that contain the word(s) or partial words entered.</div>
+        <div id="results"></div>
+      </div>
+    </div>
+
+    <!-- ENTER CRNs -->
+    <div class="panel hidden" id="pane-crn" style="border-top:none;border-radius:0 0 3px 3px">
+      <div class="panel-body" style="min-height:200px">
+        <div style="font-weight:600;margin-bottom:2px">Enter Course Reference Numbers (CRNs) to Register</div>
+        <div style="font-size:12px;margin-bottom:18px">Term: <span class="term-label">—</span></div>
+        <div id="crn-rows"></div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:14px">
+          <a id="btn-add-another" onclick="addAnotherCrn()">+ Add Another CRN</a>
+          <button class="btn primary" id="btn-add-summary" onclick="addToSummary()">Add to Summary</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SCHEDULE AND OPTIONS -->
+    <div class="panel hidden" id="pane-opt" style="border-top:none;border-radius:0 0 3px 3px">
+      <div class="panel-body" style="min-height:200px">
+        <div style="font-weight:600;margin-bottom:10px">Class Schedule and Options — <span class="term-label">—</span></div>
+        <table class="res" id="opt-table"></table>
+      </div>
+    </div>
+
+    <!-- SCHEDULE + SUMMARY (original split layout) -->
+    <div class="split">
+      <div>
+        <div class="mini-tabs">
+          <div class="mini-tab active">📅 Schedule</div>
+          <div class="mini-tab">☰ Schedule Details</div>
+        </div>
+        <div class="sched-title">Class Schedule for <span class="term-label">—</span></div>
+        <div class="sched-wrap">
+          <div class="sched-head" id="sched-head"></div>
+          <div class="sched-body" id="sched-body"></div>
+        </div>
+      </div>
+      <div>
+        <div class="sum-head"><div class="t">▤ Summary</div><a>Tuition and Fees</a></div>
+        <div class="sum-wrap">
+          <table class="sum">
+            <thead><tr><th>Title</th><th>Details</th><th>Hours</th><th>CRN</th><th>Schedule Type</th><th>Status</th><th>Action</th></tr></thead>
+            <tbody id="sum-body"></tbody>
+          </table>
+        </div>
+        <div class="totals" id="totals">Total Hours | Registered: 0 | Billing: 0 | CEU: 0 | Min: 0 | Max: 65</div>
+      </div>
+    </div>
+
+    <div class="bottom-bar">
+      <button class="btn">Panels ▾</button>
+      <button class="btn primary" id="btn-submit" onclick="submitChanges()" disabled>Submit</button>
+    </div>
+  </div>
+  <div class="footer">© 2013-2024 Ellucian Company L.P. and its affiliates. All rights reserved. <span class="made-by">| Made By Ammar</span></div>
+</section>
+
+<script>
+/* ================= DATA ================= */
+const DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday"];
+const START_H=8,END_H=18,HH=44;
+const CATALOG={
+ /* ---- IT courses ---- */
+ "10886":{crn:"10886",subj:"IT",num:"8417",sec:"002",title:"Advanced Cloud Databases",hours:15,type:"Lecture",
+   campus:"Campus A",room:"Room 36.203",inst:"Hasan Khan",bg:"#f3a9c4",
+   meet:[{d:1,s:"10:00",e:"11:50"},{d:3,s:"10:00",e:"11:50"}]},
+ "11317":{crn:"11317",subj:"IT",num:"7207",sec:"001",title:"Cloud ML Fundamentals",hours:15,type:"Lecture/Lab",
+   campus:"Campus A",room:"Room 36.124",inst:"Abdulla Alsenan",bg:"#b7a4ea",
+   meet:[{d:0,s:"12:00",e:"13:50"},{d:3,s:"12:00",e:"13:50"}]},
+ "10925":{crn:"10925",subj:"IT",num:"7012",sec:"013",title:"Entrepreneurship & Research Methods",hours:15,type:"Lecture",
+   campus:"Campus B",room:"Room 20.210",inst:"TBA",bg:"#f7c873",
+   meet:[{d:1,s:"12:00",e:"13:50"},{d:4,s:"12:00",e:"13:50"}]},
+ "11275":{crn:"11275",subj:"IT",num:"7204",sec:"004",title:"Cloud Security",hours:15,type:"Lecture/Lab",
+   campus:"Campus B",room:"Room 20.259",inst:"Srini Krishnan",bg:"#8fd6b4",
+   meet:[{d:4,s:"14:00",e:"15:50",room:"Room 20.259"},{d:0,s:"16:00",e:"17:50",room:"Room 20.250"}]},
+ "11276":{crn:"11276",subj:"IT",num:"7204",sec:"005",title:"Cloud Security",hours:15,type:"Lecture/Lab",
+   campus:"Campus B",room:"Room 20.259",inst:"Srini Krishnan",bg:"#8ad7e0",
+   meet:[{d:2,s:"08:00",e:"09:50"},{d:0,s:"14:00",e:"15:50"}]},
+ /* ---- Engineering courses ---- */
+ "11191":{crn:"11191",subj:"EN",num:"6010",sec:"001",title:"Engineering Computing Fundamentals",hours:15,type:"Lecture/Lab",
+   campus:"Campus A",room:"Room 36.115",inst:"Dr. A. Hassan",bg:"#86c98a",
+   meet:[{d:0,s:"10:00",e:"11:50"},{d:4,s:"10:00",e:"11:50"},{d:3,s:"14:00",e:"15:50"}]},
+ "10460":{crn:"10460",subj:"EL",num:"6006",sec:"056",title:"English Communication Skills A",hours:15,type:"Lecture",
+   campus:"Campus B",room:"Room 20.118",inst:"Ms. S. Ali",bg:"#a58fd6",
+   meet:[{d:1,s:"10:00",e:"11:50"},{d:3,s:"10:00",e:"11:50"}]},
+ "10949":{crn:"10949",subj:"EN",num:"6907",sec:"012",title:"Mathematics for Engineers 1",hours:15,type:"Lecture/Lab",
+   campus:"Campus A",room:"Room 36.222",inst:"Dr. M. Salem",bg:"#85b6e3",
+   meet:[{d:0,s:"12:00",e:"13:50"},{d:2,s:"14:00",e:"15:50"}]},
+ "11026":{crn:"11026",subj:"EN",num:"6903",sec:"007",title:"Mechanical Fundamentals",hours:15,type:"Lecture/Lab",
+   campus:"Campus B",room:"Room 20.305",inst:"Dr. K. Jassim",bg:"#efa0b2",
+   meet:[{d:2,s:"08:00",e:"09:50"},{d:1,s:"12:00",e:"13:50"},{d:4,s:"14:00",e:"15:50"}]}
+};
+const OPTIONS={"1":["10886","11317","10925","11275"],"2":["10886","11317","10925","11276"],"3":["11191","10460","10949","11026"]};
+
+let state={page:"dashboard",tab:"find",term:"",crns:[""],summary:[]};
+let lastHint=null;
+
+/* ================= DASHBOARD TILES ================= */
+const IC={
+profile:'<rect x="8" y="8" width="48" height="48" rx="2" class="s"/><circle cx="32" cy="26" r="8" class="c"/><path d="M18 48c2-9 8-13 14-13s12 4 14 13" class="c"/>',
+registration:'<rect x="12" y="10" width="30" height="44" rx="2" class="s"/><rect x="17" y="18" width="9" height="9" class="c"/><path d="M30 22h9M17 34h22M17 43h22" class="c"/><path d="M46 12l6 6-14 14-7 1 1-7z" class="s"/>',
+attendance:'<rect x="14" y="10" width="36" height="44" rx="2" class="s"/><path d="M20 22l3 3 6-7M20 34l3 3 6-7M20 46l3 3 6-7" class="c"/><path d="M36 24h9M36 36h9M36 48h9" class="c"/>',
+schedule:'<rect x="10" y="8" width="34" height="42" rx="2" class="s"/><path d="M16 18h22M16 26h22M16 34h14" class="c"/><path d="M40 40h13l-6.5 7 6.5 7H40l6.5-7z" class="c"/>',
+week:'<rect x="8" y="14" width="36" height="34" rx="2" class="s"/><path d="M8 24h36" class="s"/><path d="M18 10v8M26 10v8M34 10v8" class="c"/><circle cx="46" cy="44" r="10" class="c"/><path d="M46 38v6l4 3" class="c"/>',
+advising:'<circle cx="32" cy="16" r="5" class="c"/><path d="M32 6v-3M25 9l-2-2M39 9l2-2" class="c"/><circle cx="14" cy="30" r="5" class="s"/><path d="M6 44c0-7 16-7 16 0" class="s"/><circle cx="50" cy="30" r="5" class="s"/><path d="M42 44c0-7 16-7 16 0" class="s"/><path d="M8 48h48" class="s"/>',
+transcript:'<rect x="10" y="8" width="34" height="30" rx="2" class="s"/><path d="M16 16h11M16 22h11M16 28h8" class="c"/><path d="M30 32l4-11 4 11M31 28h6" class="c"/><path d="M18 46c7-5 16-5 23 0l9-5" class="s"/>',
+payment:'<rect x="6" y="14" width="48" height="30" rx="2" class="s"/><path d="M24 52h16M32 44v8" class="s"/><rect x="14" y="20" width="20" height="11" rx="2" class="c"/><path d="M40 30l11 7-5 1 3 6-4 2-3-6-4 3z" class="c"/>',
+docs:'<rect x="12" y="8" width="26" height="34" rx="2" class="s"/><rect x="20" y="14" width="26" height="34" rx="2" class="c"/><rect x="20" y="42" width="18" height="13" rx="2" class="s"/><path d="M24 42v-4a5 5 0 0110 0v4" class="s"/>',
+moodle:'<path d="M32 10L8 20l24 10 24-10z" class="s"/><path d="M14 33c8 9 28 9 36 0" class="c"/><path d="M18 52V38M18 42a5 5 0 0110 0v10M28 42a5 5 0 0110 0v10M38 42a5 5 0 0110 0v10" class="c"/>',
+calendar:'<rect x="8" y="14" width="46" height="38" rx="2" class="s"/><path d="M8 26h46" class="s"/><path d="M20 10v8M42 10v8" class="c"/><circle cx="22" cy="36" r="2.6" class="c"/><circle cx="32" cy="36" r="2.6" class="c"/><circle cx="42" cy="36" r="2.6" class="c"/><circle cx="22" cy="45" r="2.6" class="c"/><circle cx="32" cy="45" r="2.6" class="c"/>',
+grading:'<rect x="6" y="16" width="34" height="24" rx="2" class="s"/><path d="M16 50h16M23 40v10" class="s"/><rect x="34" y="8" width="22" height="28" rx="2" class="c"/><path d="M39 28l6-13 6 13M41 24h8" class="c"/><path d="M50 42v-9m0 0l-4 4m4-4l4 4" class="s"/>'};
+const TILES=[["Student Profile",IC.profile],["Registration",IC.registration],["Attendance Report",IC.attendance],["Class Schedule",IC.schedule],
+ ["Week at Glance",IC.week],["Advising Student Profile",IC.advising],["Academic Transcript",IC.transcript],["Online Payment",IC.payment],
+ ["Documents Generation",IC.docs],["Moodle",IC.moodle],["Academic Calendar",IC.calendar],["Grading System",IC.grading]];
+document.getElementById("tiles").innerHTML=TILES.map(t=>{
+  const id=t[0]==="Registration"?' id="tile-registration"':'';
+  const act=t[0]==="Registration"?' onclick="go(\'registration\')"':' onclick="notPart()"';
+  return `<div class="tile"${id}${act}><svg viewBox="0 0 64 64">${t[1]}</svg><span>${t[0]}</span></div>`;
+}).join("");
+
+/* ================= NAV ================= */
+function go(p){
+  state.page=p;
+  ["dashboard","registration","term","classes"].forEach(x=>document.getElementById("page-"+x).classList.toggle("hidden",x!==p));
+  window.scrollTo(0,0); lastHint=null; render();
+}
+function goBrowse(){ toast("هذا التدريب مخصص لـ Register for Classes — اضغط عليه","err"); }
+function notPart(){ toast("هذي الأيقونة غير مفعّلة في التدريب. المطلوب: Registration","err"); }
+function continueTerm(){
+  const v=document.getElementById("term-select").value;
+  if(!v){ toast("لازم تختار الترم أولاً من القائمة","err"); return; }
+  state.term=v; go("classes");
+}
+function setTab(t){
+  state.tab=t;
+  ["find","crn","opt"].forEach(x=>{
+    document.getElementById("tab-"+x).classList.toggle("active",x===t);
+    document.getElementById("pane-"+x).classList.toggle("hidden",x!==t);
+  });
+  render();
+}
+
+/* ================= CRN ENTRY ================= */
+function renderCrnRows(){
+  document.getElementById("crn-rows").innerHTML=state.crns.map((v,i)=>`
+    <div class="crn-row">
+      <label>CRN</label>
+      <input type="text" maxlength="10" value="${v}"
+        oninput="state.crns[${i}]=this.value;updateHints()">
+      ${i>0?`<a onclick="removeCrn(${i})" style="font-size:11px">Remove</a>`:''}
+    </div>`).join("");
+}
+function addAnotherCrn(){
+  if(!state.crns[state.crns.length-1].trim()){ toast("اكتب الـ CRN في الخانة الحالية قبل ما تضيف خانة جديدة","err"); return; }
+  if(state.crns.length>=6){ toast("وصلت الحد الأقصى للخانات","err"); return; }
+  state.crns.push(""); renderCrnRows(); updateHints();
+  const inputs=document.querySelectorAll("#crn-rows input"); inputs[inputs.length-1].focus();
+}
+function removeCrn(i){ state.crns.splice(i,1); if(!state.crns.length) state.crns=[""]; renderCrnRows(); updateHints(); }
+function fillSet(arr){
+  if(state.page!=="classes"){ toast("ادخل أول لصفحة Register for Classes","err"); return; }
+  state.crns=arr.slice(); setTab("crn"); renderCrnRows(); updateHints();
+  toast("تمت تعبئة الأرقام — الحين اضغط Add to Summary ثم Submit","ok");
+}
+function toMin(t){ const[a,b]=t.split(":").map(Number); return a*60+b; }
+function fmt(t){ let [h,m]=t.split(":").map(Number); const ap=h>=12?"pm":"am"; let hh=h%12||12; return `${hh}:${String(m).padStart(2,"0")}${ap}`; }
+function conflictWith(crn){
+  const c=CATALOG[crn];
+  for(const r of state.summary){
+    const o=CATALOG[r.crn];
+    for(const m of c.meet) for(const n of o.meet){
+      if(m.d!==n.d) continue;
+      if(toMin(m.s)<toMin(n.e) && toMin(n.s)<toMin(m.e))
+        return {crn:o.crn,day:DAYS[m.d],time:fmt(m.s)+" - "+fmt(m.e)};
+    }
+  }
+  return null;
+}
+function addToSummary(){
+  const vals=state.crns.map(c=>c.trim()).filter(Boolean);
+  if(!vals.length){ toast("اكتب رقم CRN واحد على الأقل","err"); return; }
+  let added=0;
+  for(const c of vals){
+    if(!CATALOG[c]){ toast(`The CRN ${c} is not valid for term ${state.term}.`,"err"); continue; }
+    if(state.summary.some(r=>r.crn===c)){ toast(`CRN ${c} موجود أصلاً في الـ Summary`,"err"); continue; }
+    const cf=conflictWith(c);
+    if(cf){ toast(`Time conflict: CRN ${c} يتعارض مع CRN ${cf.crn} — ${cf.day} ${cf.time}`,"err"); continue; }
+    state.summary.push({crn:c,status:"pending",action:"Web Registered"}); added++;
+  }
+  if(added){ state.crns=[""]; renderCrnRows(); toast(`تمت إضافة ${added} مادة للـ Summary — الحالة Pending. الحين اضغط Submit.`,"ok"); }
+  render();
+}
+
+/* ================= SEARCH ================= */
+function clearSearch(){ ["f-subject","f-number","f-keyword"].forEach(i=>document.getElementById(i).value=""); document.getElementById("results").innerHTML=""; }
+function doSearch(){
+  const s=document.getElementById("f-subject").value.trim().toLowerCase();
+  const n=document.getElementById("f-number").value.trim();
+  const k=document.getElementById("f-keyword").value.trim().toLowerCase();
+  const rows=Object.values(CATALOG).filter(c=>
+    (!s||c.subj.toLowerCase().includes(s)||c.title.toLowerCase().includes(s)) &&
+    (!n||c.num.includes(n)) && (!k||c.title.toLowerCase().includes(k)));
+  document.getElementById("results").innerHTML = rows.length ? `
+   <table class="res">
+     <tr><th>Title</th><th>Subject</th><th>Course</th><th>Section</th><th>CRN</th><th>Hours</th><th>Campus / Room</th><th>Instructor</th><th>Meeting Times</th><th>Add</th></tr>
+     ${rows.map(c=>`<tr>
+       <td>${c.title}</td><td>${c.subj}</td><td>${c.num}</td><td>${c.sec}</td><td>${c.crn}</td><td>${c.hours}</td>
+       <td>${c.campus} | ${c.room}</td><td>${c.inst}</td>
+       <td>${c.meet.map(m=>DAYS[m.d].slice(0,3)+" "+fmt(m.s)+"-"+fmt(m.e)).join(", ")}</td>
+       <td><button class="btn" onclick="quickAdd('${c.crn}')">Add</button></td></tr>`).join("")}
+   </table>` : `<div class="empty-row">No classes found.</div>`;
+}
+function quickAdd(crn){
+  if(state.summary.some(r=>r.crn===crn)){ toast("المادة موجودة في الـ Summary","err"); return; }
+  const cf=conflictWith(crn);
+  if(cf){ toast(`Time conflict مع CRN ${cf.crn} — ${cf.day} ${cf.time}`,"err"); return; }
+  state.summary.push({crn,status:"pending",action:"Web Registered"});
+  toast("تمت الإضافة للـ Summary — لا تنسى Submit","ok"); render();
+}
+
+/* ================= SUMMARY / SUBMIT ================= */
+function setAction(i,v){ state.summary[i].action=v; render(); }
+function renderSummary(){
+  const b=document.getElementById("sum-body");
+  if(!state.summary.length){
+    b.innerHTML=`<tr><td colspan="7" class="empty-row">Your summary is empty. Use the “Enter CRNs” tab to add classes.</td></tr>`;
+  } else {
+    b.innerHTML=state.summary.map((r,i)=>{
+      const c=CATALOG[r.crn];
+      const opts=r.status==="pending"?["Web Registered","Remove"]:["None","Drop Course"];
+      return `<tr>
+        <td>${c.title}</td><td>${c.subj} ${c.num}, ${c.sec}</td><td>${c.hours}</td><td>${c.crn}</td><td>${c.type}</td>
+        <td><span class="badge ${r.status==='pending'?'pen':'reg'}">${r.status==='pending'?'Pending':'Registered'}</span></td>
+        <td><select onchange="setAction(${i},this.value)">${opts.map(o=>`<option ${r.action===o?'selected':''}>${o}</option>`).join("")}</select></td>
+      </tr>`;}).join("");
+  }
+  const reg=state.summary.filter(r=>r.status==="registered").reduce((a,r)=>a+CATALOG[r.crn].hours,0);
+  document.getElementById("totals").textContent=`Total Hours | Registered: ${reg} | Billing: ${reg} | CEU: 0 | Min: 0 | Max: 65`;
+  const hasChange=state.summary.some(r=>r.status==="pending"||r.action==="Drop Course");
+  document.getElementById("btn-submit").disabled=!hasChange;
+}
+function submitChanges(){
+  let regd=0,drop=0; const keep=[];
+  for(const r of state.summary){
+    if(r.status==="pending"){
+      if(r.action==="Remove"){ drop++; continue; }
+      r.status="registered"; r.action="None"; regd++; keep.push(r);
+    } else if(r.action==="Drop Course"){ drop++; } else keep.push(r);
+  }
+  state.summary=keep;
+  if(regd||drop) toast(`Save Successful — ${regd?("تم تسجيل "+regd+" مادة"):""}${regd&&drop?" و ":""}${drop?("تم حذف "+drop+" مادة"):""}`,"ok");
+  if(state.summary.length>=4 && state.summary.every(r=>r.status==="registered"))
+    setTimeout(()=>toast("ممتاز 👏 خلّصت التسجيل — كل المواد Registered","ok"),400);
+  render();
+}
+
+/* ================= SCHEDULE (original hour-grid design) ================= */
+function renderSchedule(){
+  document.getElementById("sched-head").innerHTML=`<div></div>`+DAYS.map(d=>`<div>${d}</div>`).join("");
+  const hoursCol=`<div class="hours">${Array.from({length:END_H-START_H},(_,i)=>{
+      const h=START_H+i; const ap=h>=12?"pm":"am"; const hh=h%12||12;
+      return `<div class="h">${hh}${ap}</div>`;
+    }).join("")}</div>`;
+  const cols=DAYS.map((_,d)=>{
+    const cells=Array.from({length:END_H-START_H},()=>`<div class="cell"></div>`).join("");
+    const evs=state.summary.flatMap(r=>{
+      const c=CATALOG[r.crn];
+      return c.meet.filter(m=>m.d===d).map(m=>{
+        const top=(toMin(m.s)-START_H*60)/60*HH;
+        const hgt=(toMin(m.e)-toMin(m.s))/60*HH-2;
+        return `<div class="ev ${r.status==='pending'?'pending':''}" style="top:${top}px;height:${hgt}px;background:${c.bg}">
+          ${r.status==='registered'?'<span class="ck">✔</span>':''}${fmt(m.s)} - ${fmt(m.e)}<br>
+          ${r.status==='registered'?'<span class="ck">✔</span>':''}<u>${c.title}</u></div>`;
+      });
+    }).join("");
+    return `<div class="daycol">${cells}${evs}</div>`;
+  }).join("");
+  document.getElementById("sched-body").innerHTML=hoursCol+cols;
+}
+
+/* ================= OPTIONS TAB ================= */
+function renderOptions(){
+  const t=document.getElementById("opt-table");
+  if(!state.summary.length){ t.innerHTML=`<tr><td class="empty-row">No classes yet.</td></tr>`; return; }
+  t.innerHTML=`<tr><th>Title</th><th>Details</th><th>CRN</th><th>Hours</th><th>Campus / Room</th><th>Instructor</th><th>Grade Mode</th><th>Status</th></tr>`+
+   state.summary.map(r=>{const c=CATALOG[r.crn];
+     return `<tr><td>${c.title}</td><td>${c.subj} ${c.num}, ${c.sec}</td><td>${c.crn}</td><td>${c.hours}</td>
+     <td>${c.campus} | ${c.room}</td><td>${c.inst}</td><td>Standard Letter</td>
+     <td><span class="badge ${r.status==='pending'?'pen':'reg'}">${r.status==='pending'?'Pending':'Registered'}</span></td></tr>`;}).join("");
+}
+
+/* ================= HINTS ================= */
+function clearHints(){ document.querySelectorAll(".hint").forEach(e=>e.classList.remove("hint")); }
+function updateHints(){
+  clearHints();
+  let step=1,target=null;
+  if(state.page==="dashboard"){ step=1; target="tile-registration"; }
+  else if(state.page==="registration"){ step=2; target="link-register-classes"; }
+  else if(state.page==="term"){ step=3; target=document.getElementById("term-select").value?"btn-continue":"term-select"; }
+  else if(state.page==="classes"){
+    const pending=state.summary.some(r=>r.status==="pending");
+    const allReg=state.summary.length&&state.summary.every(r=>r.status==="registered");
+    if(pending){ step=7; target="btn-submit"; }
+    else if(allReg){ step=8; target=null; }
+    else if(state.tab!=="crn"){ step=4; target="tab-crn"; }
+    else{
+      const filled=state.crns.filter(c=>c.trim().length===5).length;
+      step=5;
+      if(filled>=4){ step=6; target="btn-add-summary"; }
+      else if(filled>=1){ target="btn-add-another"; }
+      else{ document.querySelector("#crn-rows input")?.classList.add("hint"); }
+    }
+  }
+  if(target){
+    const el=document.getElementById(target);
+    if(el){ el.classList.add("hint");
+      if(lastHint!==target){ lastHint=target; setTimeout(()=>el.scrollIntoView({block:"center",behavior:"smooth"}),120); } }
+  } else lastHint=null;
+  document.querySelectorAll("#guideSteps li").forEach(li=>{
+    const s=+li.dataset.s;
+    li.classList.toggle("done",s<step);
+    li.classList.toggle("active",s===step);
+  });
+}
+function toggleGuide(open){
+  document.getElementById("guide").style.display=open?"block":"none";
+  document.getElementById("guideOpen").style.display=open?"none":"block";
+}
+
+/* ================= TOAST ================= */
+function toast(msg,type){
+  const d=document.createElement("div");
+  d.className="toast "+(type||"ok"); d.textContent=msg;
+  document.getElementById("toasts").appendChild(d);
+  setTimeout(()=>{ d.style.opacity="0"; d.style.transition=".4s"; setTimeout(()=>d.remove(),400); },4300);
+}
+
+/* ================= RENDER ================= */
+function render(){
+  document.querySelectorAll(".term-label").forEach(e=>e.textContent=state.term||"—");
+  renderCrnRows(); renderSummary(); renderSchedule(); renderOptions(); updateHints();
+}
+function resetAll(){
+  state={page:"dashboard",tab:"find",term:"",crns:[""],summary:[]};
+  document.getElementById("term-select").value="";
+  clearSearch(); setTab("find"); go("dashboard");
+  toast("تم إعادة التدريب من البداية","ok");
+}
+render(); go("dashboard");
+</script>
+</body>
+</html>
