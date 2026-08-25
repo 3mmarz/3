@@ -389,6 +389,7 @@ table.res td{border:1px solid #e4e4e4;padding:5px 6px}
 /* ================= DATA ================= */
 const DAYS=["Sunday","Monday","Tuesday","Wednesday","Thursday"];
 const START_H=8,END_H=18,HH=44;
+const MAX_CRN_ROWS=12;
 const CATALOG={
  /* ---- IT courses ---- */
  "10886":{crn:"10886",subj:"IT",num:"8417",sec:"002",title:"Advanced Cloud Databases",hours:15,type:"Lecture",
@@ -424,6 +425,59 @@ const OPTIONS={"1":["10886","11317","10925","11275"],"2":["10886","11317","10925
 
 let state={page:"dashboard",tab:"find",term:"",crns:[""],summary:[]};
 let lastHint=null;
+
+/* ========== AUTO-GENERATED COURSES (any CRN is accepted) ========== */
+const GEN_BG=["#f3a9c4","#b7a4ea","#f7c873","#8fd6b4","#8ad7e0","#86c98a","#a58fd6","#85b6e3","#efa0b2","#c9d68f","#e0b48a","#9fd3c7"];
+const GEN_SUBJ=["IT","EN","EL","BS","MG","SC"];
+const GEN_INST=["TBA","Dr. A. Hassan","Ms. S. Ali","Hasan Khan","Dr. M. Salem","Srini Krishnan","Dr. K. Jassim"];
+const GEN_TITLE=["Applied Systems","Data Structures","Network Essentials","Project Management","Technical Writing",
+  "Software Quality","Digital Innovation","Statistics for IT","Operating Systems","Business Analytics",
+  "Web Technologies","Information Security"];
+const SLOTS=["08:00","10:00","12:00","14:00","16:00"];
+const DAYPAIRS=[[1,3],[0,2],[0,3],[1,4],[2,4],[0,4],[1,2],[3,4],[2,3],[0,1]];
+
+function hashCrn(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h>>>0; }
+function endOf(start){ const m=toMin(start)+110; return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"); }
+/* does this candidate meeting list clash with anything already in the summary? */
+function meetClashes(cand){
+  for(const r of state.summary){
+    const o=CATALOG[r.crn]; if(!o) continue;
+    for(const m of cand) for(const n of o.meet){
+      if(m.d!==n.d) continue;
+      if(toMin(m.s)<toMin(n.e) && toMin(n.s)<toMin(m.e)) return true;
+    }
+  }
+  return false;
+}
+/* returns the course for a CRN, inventing a realistic one if it isn't in the catalog */
+function ensureCourse(crn){
+  if(CATALOG[crn]) return CATALOG[crn];
+  const h=hashCrn(crn);
+  const subj=GEN_SUBJ[h%GEN_SUBJ.length];
+  const num=String(6000+((h>>>3)%3999));
+  const sec=String(1+((h>>>7)%14)).padStart(3,"0");
+  const bg=GEN_BG[(h>>>5)%GEN_BG.length];
+  const title=GEN_TITLE[(h>>>11)%GEN_TITLE.length];
+  const inst=GEN_INST[(h>>>13)%GEN_INST.length];
+  /* pick the first slot that doesn't collide with what's already registered */
+  let meet=null;
+  outer:
+  for(let si=0;si<SLOTS.length;si++){
+    for(let di=0;di<DAYPAIRS.length;di++){
+      const s=SLOTS[((h>>>2)+si)%SLOTS.length];
+      const dp=DAYPAIRS[((h>>>4)+di)%DAYPAIRS.length];
+      const cand=dp.map(d=>({d,s,e:endOf(s)}));
+      if(!meetClashes(cand)){ meet=cand; break outer; }
+    }
+  }
+  if(!meet){ const s=SLOTS[(h>>>2)%SLOTS.length]; meet=[{d:(h>>>4)%5,s,e:endOf(s)}]; }
+  CATALOG[crn]={crn,subj,num,sec,title,hours:15,
+    type:(h%2?"Lecture":"Lecture/Lab"),
+    campus:(h%2?"Campus A":"Campus B"),
+    room:"Room "+(20+(h%18))+"."+(100+(h%180)),
+    inst,bg,meet,generated:true};
+  return CATALOG[crn];
+}
 
 /* ================= DASHBOARD TILES ================= */
 const IC={
@@ -482,7 +536,7 @@ function renderCrnRows(){
 }
 function addAnotherCrn(){
   if(!state.crns[state.crns.length-1].trim()){ toast("اكتب الـ CRN في الخانة الحالية قبل ما تضيف خانة جديدة","err"); return; }
-  if(state.crns.length>=6){ toast("وصلت الحد الأقصى للخانات","err"); return; }
+  if(state.crns.length>=MAX_CRN_ROWS){ toast("وصلت الحد الأقصى للخانات","err"); return; }
   state.crns.push(""); renderCrnRows(); updateHints();
   const inputs=document.querySelectorAll("#crn-rows input"); inputs[inputs.length-1].focus();
 }
@@ -495,9 +549,9 @@ function fillSet(arr){
 function toMin(t){ const[a,b]=t.split(":").map(Number); return a*60+b; }
 function fmt(t){ let [h,m]=t.split(":").map(Number); const ap=h>=12?"pm":"am"; let hh=h%12||12; return `${hh}:${String(m).padStart(2,"0")}${ap}`; }
 function conflictWith(crn){
-  const c=CATALOG[crn];
+  const c=CATALOG[crn]; if(!c) return null;
   for(const r of state.summary){
-    const o=CATALOG[r.crn];
+    const o=CATALOG[r.crn]; if(!o) continue;
     for(const m of c.meet) for(const n of o.meet){
       if(m.d!==n.d) continue;
       if(toMin(m.s)<toMin(n.e) && toMin(n.s)<toMin(m.e))
@@ -511,10 +565,8 @@ function addToSummary(){
   if(!vals.length){ toast("اكتب رقم CRN واحد على الأقل","err"); return; }
   let added=0;
   for(const c of vals){
-    if(!CATALOG[c]){ toast(`The CRN ${c} is not valid for term ${state.term}.`,"err"); continue; }
     if(state.summary.some(r=>r.crn===c)){ toast(`CRN ${c} موجود أصلاً في الـ Summary`,"err"); continue; }
-    const cf=conflictWith(c);
-    if(cf){ toast(`Time conflict: CRN ${c} يتعارض مع CRN ${cf.crn} — ${cf.day} ${cf.time}`,"err"); continue; }
+    ensureCourse(c);                       // أي رقم يُقبل ويُنشأ له مقرر
     state.summary.push({crn:c,status:"pending",action:"Web Registered"}); added++;
   }
   if(added){ state.crns=[""]; renderCrnRows(); toast(`تمت إضافة ${added} مادة للـ Summary — الحالة Pending. الحين اضغط Submit.`,"ok"); }
@@ -527,7 +579,7 @@ function doSearch(){
   const s=document.getElementById("f-subject").value.trim().toLowerCase();
   const n=document.getElementById("f-number").value.trim();
   const k=document.getElementById("f-keyword").value.trim().toLowerCase();
-  const rows=Object.values(CATALOG).filter(c=>
+  const rows=Object.values(CATALOG).filter(c=>!c.generated).filter(c=>
     (!s||c.subj.toLowerCase().includes(s)||c.title.toLowerCase().includes(s)) &&
     (!n||c.num.includes(n)) && (!k||c.title.toLowerCase().includes(k)));
   document.getElementById("results").innerHTML = rows.length ? `
@@ -542,6 +594,7 @@ function doSearch(){
 }
 function quickAdd(crn){
   if(state.summary.some(r=>r.crn===crn)){ toast("المادة موجودة في الـ Summary","err"); return; }
+  ensureCourse(crn);
   const cf=conflictWith(crn);
   if(cf){ toast(`Time conflict مع CRN ${cf.crn} — ${cf.day} ${cf.time}`,"err"); return; }
   state.summary.push({crn,status:"pending",action:"Web Registered"});
@@ -556,7 +609,7 @@ function renderSummary(){
     b.innerHTML=`<tr><td colspan="7" class="empty-row">Your summary is empty. Use the “Enter CRNs” tab to add classes.</td></tr>`;
   } else {
     b.innerHTML=state.summary.map((r,i)=>{
-      const c=CATALOG[r.crn];
+      const c=ensureCourse(r.crn);
       const opts=r.status==="pending"?["Web Registered","Remove"]:["None","Drop Course"];
       return `<tr>
         <td>${c.title}</td><td>${c.subj} ${c.num}, ${c.sec}</td><td>${c.hours}</td><td>${c.crn}</td><td>${c.type}</td>
@@ -564,7 +617,7 @@ function renderSummary(){
         <td><select onchange="setAction(${i},this.value)">${opts.map(o=>`<option ${r.action===o?'selected':''}>${o}</option>`).join("")}</select></td>
       </tr>`;}).join("");
   }
-  const reg=state.summary.filter(r=>r.status==="registered").reduce((a,r)=>a+CATALOG[r.crn].hours,0);
+  const reg=state.summary.filter(r=>r.status==="registered").reduce((a,r)=>a+ensureCourse(r.crn).hours,0);
   document.getElementById("totals").textContent=`Total Hours | Registered: ${reg} | Billing: ${reg} | CEU: 0 | Min: 0 | Max: 65`;
   const hasChange=state.summary.some(r=>r.status==="pending"||r.action==="Drop Course");
   document.getElementById("btn-submit").disabled=!hasChange;
@@ -594,7 +647,7 @@ function renderSchedule(){
   const cols=DAYS.map((_,d)=>{
     const cells=Array.from({length:END_H-START_H},()=>`<div class="cell"></div>`).join("");
     const evs=state.summary.flatMap(r=>{
-      const c=CATALOG[r.crn];
+      const c=ensureCourse(r.crn);
       return c.meet.filter(m=>m.d===d).map(m=>{
         const top=(toMin(m.s)-START_H*60)/60*HH;
         const hgt=(toMin(m.e)-toMin(m.s))/60*HH-2;
@@ -613,7 +666,7 @@ function renderOptions(){
   const t=document.getElementById("opt-table");
   if(!state.summary.length){ t.innerHTML=`<tr><td class="empty-row">No classes yet.</td></tr>`; return; }
   t.innerHTML=`<tr><th>Title</th><th>Details</th><th>CRN</th><th>Hours</th><th>Campus / Room</th><th>Instructor</th><th>Grade Mode</th><th>Status</th></tr>`+
-   state.summary.map(r=>{const c=CATALOG[r.crn];
+   state.summary.map(r=>{const c=ensureCourse(r.crn);
      return `<tr><td>${c.title}</td><td>${c.subj} ${c.num}, ${c.sec}</td><td>${c.crn}</td><td>${c.hours}</td>
      <td>${c.campus} | ${c.room}</td><td>${c.inst}</td><td>Standard Letter</td>
      <td><span class="badge ${r.status==='pending'?'pen':'reg'}">${r.status==='pending'?'Pending':'Registered'}</span></td></tr>`;}).join("");
@@ -634,7 +687,7 @@ function updateHints(){
     else if(allReg){ step=8; target=null; }
     else if(state.tab!=="crn"){ step=4; target="tab-crn"; }
     else{
-      const filled=state.crns.filter(c=>c.trim().length===5).length;
+      const filled=state.crns.filter(c=>c.trim().length>=4).length;
       step=5;
       if(filled>=4){ step=6; target="btn-add-summary"; }
       else if(filled>=1){ target="btn-add-another"; }
